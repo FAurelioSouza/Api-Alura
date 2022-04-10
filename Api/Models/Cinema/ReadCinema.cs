@@ -5,6 +5,7 @@ namespace Api.Models
 {
     public class ReadCinema
     {
+        public int Id { get; set; }
         public string Nome { get; set; }
 
         public virtual EnderecoModel Endereco { get; set; }

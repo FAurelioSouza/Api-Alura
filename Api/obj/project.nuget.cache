@@ -1,12 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "u6K9P/By27gJgdrKfbQfujAoXEfwog6pLqDSja+ETIjSEOtG1isidG+DDpYK+ycYbflwrOTjuqPNy5SyjzUsIA==",
+  "dgSpecHash": "KhmGbNaTGzUHdIQGcLCNFgEDPe0K30WEhMCXsijJRE4K/rB3wv+H1pPbh79PrKTPqRgmHGyxxgWZ4sfu5SglwQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\lipex\\Desktop\\Projetos Git\\Api\\Api\\Api\\Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\lipex\\.nuget\\packages\\automapper\\11.0.0\\automapper.11.0.0.nupkg.sha512",
     "C:\\Users\\lipex\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\11.0.0\\automapper.extensions.microsoft.dependencyinjection.11.0.0.nupkg.sha512",
     "C:\\Users\\lipex\\.nuget\\packages\\castle.core\\4.4.1\\castle.core.4.4.1.nupkg.sha512",
+    "C:\\Users\\lipex\\.nuget\\packages\\fluentresults\\2.5.0\\fluentresults.2.5.0.nupkg.sha512",
     "C:\\Users\\lipex\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\lipex\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\lipex\\.nuget\\packages\\microsoft.data.sqlclient\\2.1.4\\microsoft.data.sqlclient.2.1.4.nupkg.sha512",

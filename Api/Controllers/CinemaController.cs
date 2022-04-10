@@ -1,6 +1,8 @@
 ﻿using Api.Models;
 using Api.Repository;
+using Api.Service;
 using AutoMapper;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -9,28 +11,23 @@ namespace Api.Controllers
     [Route("[controller]")]
     public class CinemaController : ControllerBase
     {
-        private FilmeRepository _Repo;
-        private IMapper _Mapp;
-
-        public CinemaController(FilmeRepository repo, IMapper mapp)
+        private CinemaService _CinemaService;
+        public CinemaController(CinemaService service)
         {
-            _Repo = repo;
-            _Mapp = mapp;
+            _CinemaService = service;
         }
 
         [HttpPost]
         public IActionResult CreateCinema([FromBody] CreateCinema Cinema)
         {
-            CinemaModel cinema = _Mapp.Map<CinemaModel>(Cinema);
-            _Repo.Cinemas.Add(cinema);
-            _Repo.SaveChanges();
+            ReadCinema cinema = _CinemaService.CreateCinema(Cinema);
             return CreatedAtAction(nameof(ReturnCinemaId), new { Id = cinema.Id }, cinema);
         }
 
         [HttpGet]
         public IActionResult ReturnCinema()
         {
-            return Ok(_Repo.Cinemas);
+            return Ok(_CinemaService.RetornaCinema());
         }
 
         [HttpGet("{id}")]
@@ -38,12 +35,8 @@ namespace Api.Controllers
         {
             try
             {
-                CinemaModel cinema = _Repo.Cinemas.FirstOrDefault(cinema => cinema.Id == id);
-                if (cinema != null)
-                {
-                    ReadCinema returnCinema = _Mapp.Map<ReadCinema>(cinema);
-                    return Ok(returnCinema);
-                }
+                ReadCinema cinema = _CinemaService.GetCinemaId(id);
+                if (cinema != null) return Ok(cinema);
                 return NotFound();
             }
             catch (Exception ex)
@@ -57,15 +50,8 @@ namespace Api.Controllers
         {
             try
             {
-                CinemaModel cinema = _Repo.Cinemas.FirstOrDefault(cinema => cinema.Id == id);
-                if (cinema == null)
-                {
-                    return NotFound();
-                }
-
-                _Mapp.Map(Cinema, cinema);
-
-                _Repo.SaveChanges();
+                Result resultado = _CinemaService.UpdateCinema(id, Cinema);
+                if (resultado.IsFailed) return NoContent();
                 return NoContent();
             }
             catch (Exception ex)
@@ -80,13 +66,8 @@ namespace Api.Controllers
         {
             try
             {
-                CinemaModel cinema = _Repo.Cinemas.FirstOrDefault(cinema => cinema.Id == id);
-                if (cinema == null)
-                {
-                    return NotFound();
-                }
-                _Repo.Remove(cinema);
-                _Repo.SaveChanges();
+                Result resultado = _CinemaService.DeleteCinema(id);
+                if (resultado.IsFailed) return NoContent();
                 return NoContent();
             }
             catch (Exception ex)

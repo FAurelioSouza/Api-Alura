@@ -1,5 +1,6 @@
 ﻿using Api.Models;
 using Api.Repository;
+using Api.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -30,7 +31,14 @@ namespace Api
 
             //string de conexão do banco
             //var connectionString = Configuration["Data:ConnectionStrings:FilmeConnection1"];
+
+            // 
             builder.Services.AddDbContext<FilmeRepository>(opts => opts.UseLazyLoadingProxies().UseSqlServer(Configuration.GetSection("Data").GetConnectionString("FilmeConnection1")));
+            // passando as definições para cada controler com seu respectivo Service.
+            builder.Services.AddScoped<FilmeService, FilmeService>();
+            builder.Services.AddScoped<CinemaService, CinemaService>();
+            builder.Services.AddScoped<EnderecoService, EnderecoService>();
+            builder.Services.AddScoped<GerenteService, GerenteService>();
             builder.Services.AddTransient<DbContextFactory>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             

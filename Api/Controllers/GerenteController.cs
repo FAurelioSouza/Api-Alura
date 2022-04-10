@@ -1,6 +1,8 @@
 using Api.Models;
 using Api.Repository;
+using Api.Service;
 using AutoMapper;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -9,28 +11,24 @@ namespace Api.Controllers
     [Route("[controller]")]
     public class GerenteController : ControllerBase
     {
-        private FilmeRepository _Repo;
-        private IMapper _Mapp;
+        private GerenteService _GerenteService;
 
-        public GerenteController(FilmeRepository repo, IMapper mapp)
+        public GerenteController(GerenteService service)
         {
-            _Repo = repo;
-            _Mapp = mapp;
+            _GerenteService = service;
         }
 
         [HttpPost]
         public IActionResult CreateGerente([FromBody] CreateGerente NewGerente)
         {
-            GerenteModel gerente = _Mapp.Map<GerenteModel>(NewGerente);
-            _Repo.Gerentes.Add(gerente);
-            _Repo.SaveChanges();
+            ReadGerente gerente = _GerenteService.CreateGerente(NewGerente);
             return CreatedAtAction(nameof(GetGerenteId), new { Id = gerente.Id }, gerente);
         }
 
         [HttpGet]
         public IActionResult retornaGerente()
         {
-            return Ok(_Repo.Gerentes);
+            return Ok(_GerenteService.retornaGerente());
         }
 
         [HttpGet("{id}")]
@@ -38,12 +36,8 @@ namespace Api.Controllers
         {
             try
             {
-                GerenteModel gerente = _Repo.Gerentes.FirstOrDefault(gerente => gerente.Id == id);
-                if (gerente != null)
-                {
-                    ReadGerente returnGerente = _Mapp.Map<ReadGerente>(gerente);
-                    return Ok(returnGerente);
-                }
+                ReadGerente gerente = _GerenteService.GetGerenteId(id);
+                if (gerente != null) return Ok(gerente);
                 return NotFound();
             }
             catch (Exception ex)
@@ -55,15 +49,8 @@ namespace Api.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateGerente(int id, [FromBody] UpdateGerente GerenteUpdate)
         {
-            GerenteModel gerentes = _Repo.Gerentes.FirstOrDefault(gerentes => gerentes.Id == id);
-            if (gerentes == null)
-            {
-                return NotFound();
-            }
-
-            _Mapp.Map(GerenteUpdate, gerentes);
-
-            _Repo.SaveChanges();
+            Result retorno = _GerenteService.UpdateGerente(id, GerenteUpdate);
+            if(retorno.IsFailed) return NoContent();
             return NoContent();
             
         }
@@ -71,13 +58,8 @@ namespace Api.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteGerente(int id)
         {
-            GerenteModel gerente = _Repo.Gerentes.FirstOrDefault(gerente => gerente.Id == id);
-            if (gerente == null)
-            {
-                return NotFound();
-            }
-            _Repo.Remove(gerente);
-            _Repo.SaveChanges();
+            Result retorno = _GerenteService.DeleteGerente(id);
+            if (retorno.IsFailed) return NoContent();
             return NoContent();
         }
     }

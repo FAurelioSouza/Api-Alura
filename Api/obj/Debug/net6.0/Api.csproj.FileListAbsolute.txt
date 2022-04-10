@@ -62,4 +62,5 @@ C:\Users\lipex\Desktop\Projetos Git\Api\Api\Api\bin\Debug\net6.0\AutoMapper.dll
 C:\Users\lipex\Desktop\Projetos Git\Api\Api\Api\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\lipex\Desktop\Projetos Git\Api\Api\Api\bin\Debug\net6.0\Castle.Core.dll
 C:\Users\lipex\Desktop\Projetos Git\Api\Api\Api\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Proxies.dll
+C:\Users\lipex\Desktop\Projetos Git\Api\Api\Api\bin\Debug\net6.0\FluentResults.dll
 C:\Users\lipex\Desktop\Projetos Git\Api\Api\Api\obj\Debug\net6.0\Api.csproj.AssemblyReference.cache

@@ -1,6 +1,8 @@
 ﻿using Api.Models;
 using Api.Repository;
+using Api.Service;
 using AutoMapper;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -9,28 +11,24 @@ namespace Api.Controllers
     [Route("[controller]")]
     public class EnderecoController : ControllerBase
     {
-        private FilmeRepository _Repo;
-        private IMapper _Mapp;
+        private EnderecoService _EnderecoService;
 
-        public EnderecoController(FilmeRepository repo, IMapper mapp)
+        public EnderecoController(EnderecoService service)
         {
-            _Repo = repo; 
-            _Mapp = mapp;
+            _EnderecoService = service;
         }
 
         [HttpPost]
         public IActionResult CreateEndereco([FromBody] CreateEndereco Endereco)
         {
-            EnderecoModel endereco = _Mapp.Map<EnderecoModel>(Endereco);
-            _Repo.Enderecos.Add(endereco);
-            _Repo.SaveChanges();
+            ReadEndereco endereco = _EnderecoService.CreateEndereco(Endereco);
             return CreatedAtAction(nameof(ReturnEnderecoId), new { Id = endereco.Id }, endereco);
         }
 
         [HttpGet]
-        public IActionResult ReturnCinema()
+        public IActionResult ReturnEndereco()
         {
-            return Ok(_Repo.Enderecos);
+            return Ok(_EnderecoService.ReturnEndereco());
         }
 
         [HttpGet("{id}")]
@@ -38,12 +36,8 @@ namespace Api.Controllers
         {
             try
             {
-                EnderecoModel endereco = _Repo.Enderecos.FirstOrDefault(endereco => endereco.Id == id);
-                if (endereco != null)
-                {
-                    ReadEndereco returnEndereco = _Mapp.Map<ReadEndereco>(endereco);
-                    return Ok(returnEndereco);
-                }
+                ReadEndereco endereco = _EnderecoService.ReturnEnderecoId(id);
+                if (endereco != null) return Ok(endereco);
                 return NotFound();
             }
             catch (Exception ex)
@@ -57,15 +51,8 @@ namespace Api.Controllers
         {
             try
             {
-                EnderecoModel endereco = _Repo.Enderecos.FirstOrDefault(endereco => endereco.Id == id);
-                if (endereco == null)
-                {
-                    return NotFound();
-                }
-
-                _Mapp.Map(Endereco, endereco);
-
-                _Repo.SaveChanges();
+                Result retorno = _EnderecoService.UpdateEndereco(id, Endereco);
+                if (retorno.IsFailed) return NoContent();
                 return NoContent();
             }
             catch (Exception ex)
@@ -80,13 +67,8 @@ namespace Api.Controllers
         {
             try
             {
-                EnderecoModel endereco = _Repo.Enderecos.FirstOrDefault(endereco => endereco.Id == id);
-                if (endereco == null)
-                {
-                    return NotFound();
-                }
-                _Repo.Remove(endereco);
-                _Repo.SaveChanges();
+                Result retorno = _EnderecoService.DeleteEndereco(id);
+                if (retorno.IsFailed) return NotFound();
                 return NoContent();
             }
             catch (Exception ex)

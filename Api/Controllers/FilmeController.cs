@@ -1,6 +1,8 @@
 using Api.Models;
 using Api.Repository;
+using Api.Service;
 using AutoMapper;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -9,28 +11,24 @@ namespace Api.Controllers
     [Route("[controller]")]
     public class FilmeController : ControllerBase
     {
-        private FilmeRepository _Repo;
-        private IMapper _Mapp;
+        private FilmeService _FilmeService;
 
-        public FilmeController(FilmeRepository repo, IMapper mapp)
+        public FilmeController(FilmeService service)
         {
-            _Repo = repo;
-            _Mapp = mapp;
+            _FilmeService = service;
         }
 
         [HttpPost]
         public IActionResult CreateFilme([FromBody] CreateFilme NewFilme)
         {
-            FilmeModel filme = _Mapp.Map<FilmeModel>(NewFilme);
-            _Repo.Filmes.Add(filme);
-            _Repo.SaveChanges();
+            ReadFilme filme =  _FilmeService.CreateFilme(NewFilme);
             return CreatedAtAction(nameof(GetFilmeId), new { Id = filme.Id }, filme);
         }
 
         [HttpGet]
         public IActionResult retornaFilme()
         {
-            return Ok(_Repo.Filmes);
+            return Ok(_FilmeService.RetornaFilme());
         }
 
         [HttpGet("{id}")]
@@ -38,12 +36,8 @@ namespace Api.Controllers
         {
             try
             {
-                FilmeModel filme = _Repo.Filmes.FirstOrDefault(filme => filme.Id == id);
-                if (filme != null)
-                {
-                    ReadFilme returnFilme = _Mapp.Map<ReadFilme>(filme);
-                    return Ok(returnFilme);
-                }
+                ReadFilme filme = _FilmeService.GetFilmeId(id);
+                if (filme != null) return Ok(filme);
                 return NotFound();
             }
             catch (Exception ex)
@@ -55,15 +49,8 @@ namespace Api.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateFilme(int id, [FromBody] UpdateFilme FilmeUpdate)
         {
-            FilmeModel filme = _Repo.Filmes.FirstOrDefault(filme => filme.Id == id);
-            if (filme == null)
-            {
-                return NotFound();
-            }
-
-            _Mapp.Map(FilmeUpdate, filme);
-
-            _Repo.SaveChanges();
+            Result resultado = _FilmeService.UpdateFilme(id, FilmeUpdate);
+            if (resultado.IsSuccess) return NoContent();
             return NoContent();
             
         }
@@ -71,13 +58,8 @@ namespace Api.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteFilme(int id)
         {
-            FilmeModel filme = _Repo.Filmes.FirstOrDefault(filme => filme.Id == id);
-            if (filme == null)
-            {
-                return NotFound();
-            }
-            _Repo.Remove(filme);
-            _Repo.SaveChanges();
+            Result Resultado = _FilmeService.DeleteFilme(id);
+            if (Resultado.IsFailed) return NotFound();
             return NoContent();
         }
     }
